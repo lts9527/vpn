@@ -86,11 +86,14 @@ func (snw *ServerNetWork) readTCPNetworkToTUN() {
 			continue
 		}
 		b := buf[:n]
-		if key := netutil.GetSrcKey(b); key != "" {
-			snw.Net.Write(b)
-			snw.connCache.Set(key, snw.TcpConn.RemoteAddr(), cache.DefaultExpiration)
-			snw.receivingBytes(n)
-		}
+		//if key := netutil.GetSrcKey(b); key != "" {
+		//	snw.Net.Write(b)
+		//	snw.connCache.Set(key, snw.TcpConn.RemoteAddr(), cache.DefaultExpiration)
+		//	snw.receivingBytes(n)
+		//}
+		snw.Net.Write(b)
+		//snw.connCache.Set(key, snw.TcpConn.RemoteAddr(), cache.DefaultExpiration)
+		snw.receivingBytes(n)
 	}
 }
 

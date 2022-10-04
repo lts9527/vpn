@@ -43,7 +43,7 @@ func (cnw *ClientNetWork) ClientDial() {
 }
 
 func (cnw *ClientNetWork) readTCPNetworkToTUN() {
-	buf := make([]byte, 2000)
+	buf := make([]byte, cnw.Cos.BufferSize)
 	for {
 		n, err := cnw.TcpConn.Read(buf)
 		if err != nil {
@@ -51,13 +51,16 @@ func (cnw *ClientNetWork) readTCPNetworkToTUN() {
 			return
 		}
 		b := buf[:n]
-		cnw.Net.Write(b)
+		_, err = cnw.Net.Write(b)
+		if err != nil {
+			log.Error(err.Error())
+		}
 		cnw.receivingBytes(n)
 	}
 }
 
 func (cnw *ClientNetWork) readTunToTCPNetwork() {
-	buf := make([]byte, 2000)
+	buf := make([]byte, cnw.Cos.BufferSize)
 	for {
 		n, err := cnw.Net.Read(buf)
 		if err != nil || n == 0 {
@@ -65,7 +68,10 @@ func (cnw *ClientNetWork) readTunToTCPNetwork() {
 			continue
 		}
 		b := buf[:n]
-		cnw.TcpConn.Write(b)
+		_, err = cnw.TcpConn.Write(b)
+		if err != nil {
+			log.Error(err.Error())
+		}
 		cnw.setSentBytes(n)
 	}
 }

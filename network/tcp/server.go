@@ -15,7 +15,6 @@ import (
 type ServerNetWork struct {
 	Cos       *model.CreateOptions
 	connCache *cache.Cache
-	UdpConn   *net.UDPConn
 	TcpConn   net.Conn
 	Net       *water.Interface
 }
@@ -53,13 +52,13 @@ func (snw *ServerNetWork) ListenTCP() {
 			return
 		}
 		snw.TcpConn = client
-		fmt.Println("Accept connections from : ", client.RemoteAddr())
-		go snw.clientHandler(snw.Cos, snw.Net, client)
+		log.Warn(fmt.Sprintf("Accept connections from : %s", client.RemoteAddr()))
+		go snw.clientHandler()
 	}
 }
 
 // ClientHandler
-func (snw *ServerNetWork) clientHandler(config *model.CreateOptions, water *water.Interface, client net.Conn) {
+func (snw *ServerNetWork) clientHandler() {
 	go snw.readTunToTCPNetwork()
 	snw.readTCPNetworkToTUN()
 }

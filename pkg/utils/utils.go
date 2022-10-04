@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net"
 	"os/exec"
+	"runtime"
 	"strings"
 	"vpn/log"
 )
@@ -39,6 +40,14 @@ func FormatFileSize(fileSize int64) (size string) {
 }
 
 func DiscoverGatewayOSSpecificIPv4() (ip net.IP, err error) {
+	if runtime.GOOS == "linux" {
+		ipstr := ExecCmd("route -n | grep -A 1 'Gateway' | awk 'NR==2{print $2}'")
+		ipv4 := net.ParseIP(ipstr)
+		if ipv4 == nil {
+			return nil, errors.New("can't parse string output")
+		}
+		return ipv4, nil
+	}
 	ipstr := ExecCmd("sh", "-c", "route -n get default | grep 'gateway' | awk 'NR==1{print $2}'")
 	ipv4 := net.ParseIP(ipstr)
 	if ipv4 == nil {

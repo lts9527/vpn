@@ -31,13 +31,14 @@ func NewClientNetWork(config *model.CreateOptions, Net *water.Interface) *Client
 }
 
 func (cnw *ClientNetWork) ClientDial() {
-	serverConn, err := net.Dial("tcp", cnw.Cos.RemoteServerIP)
+	conn, err := net.Dial("tcp", cnw.Cos.RemoteServerIP+":"+cnw.Cos.ListenPort)
 	if err != nil {
 		panic(err)
 	}
-	defer serverConn.Close()
+	defer conn.Close()
+	cnw.TcpConn = conn
 	go cnw.readTCPNetworkToTUN()
-	go cnw.readTunToTCPNetwork()
+	cnw.readTunToTCPNetwork()
 }
 
 func (cnw *ClientNetWork) readTCPNetworkToTUN() {
@@ -63,11 +64,7 @@ func (cnw *ClientNetWork) readTunToTCPNetwork() {
 			continue
 		}
 		b := buf[:n]
-		_, err = cnw.TcpConn.Write(b)
-		if err != nil {
-			log.Warn("client write err :", err)
-			continue
-		}
+		cnw.TcpConn.Write(b)
 		cnw.setSentBytes(n)
 	}
 }

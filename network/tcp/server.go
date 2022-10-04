@@ -33,7 +33,7 @@ func NewServerNetWork(config *model.CreateOptions, Net *water.Interface) *Server
 }
 
 func (snw *ServerNetWork) ListenTCP() {
-	ListenAddr, err := net.ResolveTCPAddr("tcp", snw.Cos.ServerAddress)
+	ListenAddr, err := net.ResolveTCPAddr("tcp", ":"+snw.Cos.ListenPort)
 	if err != nil {
 		log.Error("Failed to get tcp socket:", err)
 		panic(err)
@@ -59,7 +59,7 @@ func (snw *ServerNetWork) ListenTCP() {
 // ClientHandler
 func (snw *ServerNetWork) clientHandler(config *model.CreateOptions, water *water.Interface, client net.Conn) {
 	go snw.readTunToTCPNetwork()
-	go snw.readTCPNetworkToTUN()
+	snw.readTCPNetworkToTUN()
 }
 
 func (snw *ServerNetWork) readTunToTCPNetwork() {

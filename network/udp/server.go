@@ -6,6 +6,7 @@ import (
 	"github.com/patrickmn/go-cache"
 	"net"
 	"sync/atomic"
+	"time"
 	"vpn/log"
 	"vpn/model"
 )
@@ -24,8 +25,9 @@ var (
 
 func NewServerNetWork(config *model.CreateOptions, Net *water.Interface) *ServerNetWork {
 	snw := &ServerNetWork{
-		Cos: config,
-		Net: Net,
+		Cos:       config,
+		Net:       Net,
+		connCache: cache.New(30*time.Minute, 10*time.Minute),
 	}
 	return snw
 }

@@ -39,19 +39,23 @@ func (s *Server) Init() {
 }
 
 func (s *Server) Start() {
-	switch {
-	case s.config.ServerMode && s.config.NetworkMode == "udp":
-		net := s.NewUDPServerNetWork()
-		net.ListenUDP()
-	case !s.config.ServerMode && s.config.NetworkMode == "udp":
-		net := s.NewUDPClientNetWork()
-		net.ClientDial()
-	case s.config.ServerMode && s.config.NetworkMode == "tcp":
-		net := s.NewTCPServerNetWork()
-		net.ListenTCP()
-	case !s.config.ServerMode && s.config.NetworkMode == "tcp":
-		net := s.NewTCPClientNetWork()
-		net.ClientDial()
+	switch s.config.NetworkMode {
+	case "udp":
+		if s.config.ServerMode {
+			net := s.NewUDPServerNetWork()
+			net.ListenUDP()
+		} else {
+			net := s.NewUDPClientNetWork()
+			net.ClientDial()
+		}
+	case "tcp":
+		if s.config.ServerMode {
+			net := s.NewTCPServerNetWork()
+			net.ListenTCP()
+		} else {
+			net := s.NewTCPClientNetWork()
+			net.ClientDial()
+		}
 	default:
 		panic("Select the correct mode")
 	}

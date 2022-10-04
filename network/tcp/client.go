@@ -34,7 +34,8 @@ func NewClientNetWork(config *model.CreateOptions, Net *water.Interface) *Client
 func (cnw *ClientNetWork) ClientDial() {
 	conn, err := net.Dial("tcp", cnw.Cos.RemoteServerIP+":"+cnw.Cos.ListenPort)
 	if err != nil {
-		panic(err)
+		log.Error(err.Error())
+		return
 	}
 	log.Warn(fmt.Sprintf("Establish a connection from: %s", conn.RemoteAddr()))
 	defer conn.Close()

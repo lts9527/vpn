@@ -14,6 +14,7 @@ type Server struct {
 	svc    *service.Service
 	Tun    *water.Interface
 	config *model.CreateOptions
+	Net    interface{}
 }
 
 func NewServer(config *model.CreateOptions) *Server {
@@ -56,6 +57,7 @@ func (s *Server) Start() {
 		} else {
 			net := s.NewTCPClientNetWork()
 			net.ClientDial()
+			s.Net = net
 		}
 	default:
 		panic("Select the correct mode")

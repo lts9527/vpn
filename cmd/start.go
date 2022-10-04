@@ -18,11 +18,12 @@ func runCreate(ctx context.Context, c *model.CreateOptions) {
 	srv := server.NewServer(create)
 	srv.Init()
 	go srv.Start()
-	//defer func() {
-	//	if err := recover(); err != nil {
-	//		fmt.Println(err)
-	//	}
-	//}()
+	defer func() {
+		if err := recover(); err != nil {
+			fmt.Println("panic")
+			fmt.Println(err)
+		}
+	}()
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
 	<-quit

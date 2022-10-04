@@ -54,6 +54,8 @@ func SetClientTUN(config *model.CreateOptions) {
 }
 
 func ResetTUN(config *model.CreateOptions) {
-	utils.ExecCmd("route", "add", "default", config.LocalGateway)
-	utils.ExecCmd("route", "change", "default", config.LocalGateway)
+	if config.OS == "darwin" {
+		utils.ExecCmd("route", "add", "default", config.LocalGateway)
+		utils.ExecCmd("route", "change", "default", config.LocalGateway)
+	}
 }

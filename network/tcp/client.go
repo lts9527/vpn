@@ -1,6 +1,7 @@
 package tcp
 
 import (
+	"fmt"
 	"github.com/net-byte/water"
 	"github.com/patrickmn/go-cache"
 	"net"
@@ -46,7 +47,7 @@ func (cnw *ClientNetWork) readTCPNetworkToTUN() {
 	for {
 		n, err := cnw.TcpConn.Read(buf)
 		if err != nil {
-			log.Warn("client read err : ", err)
+			log.Warn(fmt.Sprintf("client read err : %v", err))
 			return
 		}
 		b := buf[:n]

@@ -33,7 +33,7 @@ func (cnw *ClientNetWork) ClientDial() {
 		return
 	}
 	cnw.serverAddr = serverAddr
-	localAddr, err := net.ResolveUDPAddr("udp", ":"+cnw.Cos.ListenPort)
+	localAddr, err := net.ResolveUDPAddr("udp", ":"+"3000")
 	if err != nil {
 		panic(err)
 	}
@@ -44,7 +44,7 @@ func (cnw *ClientNetWork) ClientDial() {
 	cnw.UdpConn = conn
 	defer conn.Close()
 	go cnw.readUDPNetworkToTUN()
-	go cnw.readTunToUDPNetwork()
+	cnw.readTunToUDPNetwork()
 }
 
 func (cnw *ClientNetWork) readUDPNetworkToTUN() {

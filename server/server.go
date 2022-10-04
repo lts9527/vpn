@@ -31,11 +31,12 @@ func (s *Server) Init() {
 	s.config.OS = runtime.GOOS
 	s.config.BufferSize = 64 * 1024
 	s.Tun, err = s.CreateTUN(s.config)
-	s.config.DeviceName = s.Tun.Name()
-	s.SetTUN(s.config)
 	if err != nil {
 		panic(err)
 	}
+	s.config.DeviceName = s.Tun.Name()
+	s.SetTUN(s.config)
+
 }
 
 func (s *Server) Start() {

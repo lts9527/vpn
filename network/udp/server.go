@@ -46,7 +46,7 @@ func (snw *ServerNetWork) ListenUDP() {
 	snw.UdpConn = conn
 	defer conn.Close()
 	go snw.readTunToUDPNetwork()
-	go snw.readUDPNetworkToTUN()
+	snw.readUDPNetworkToTUN()
 }
 
 // tunToUdp sends packets from tun to udp

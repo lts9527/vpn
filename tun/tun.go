@@ -38,9 +38,6 @@ func SetClientTUN(config *model.CreateOptions) {
 		utils.ExecCmd("route", "add", config.ServerAddress, "via", config.LocalGateway, "dev", config.PhysicalDevice)
 		utils.ExecCmd("route", "add", config.DNS, "via", config.LocalGateway, "dev", config.PhysicalDevice)
 	case "darwin":
-		//config.ClientAddress = config.ClientAddress + "/24"
-		//config.ServerAddress = config.ServerAddress + "/24"
-		fmt.Println("config.DeviceName", config.DeviceName)
 		utils.ExecCmd("ifconfig", config.DeviceName, "inet", config.ClientAddress, config.ServerAddress, "up")
 		utils.ExecCmd("route", "add", "default", config.ServerAddress)
 		utils.ExecCmd("route", "change", "default", config.ServerAddress)

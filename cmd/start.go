@@ -16,13 +16,6 @@ var create = &model.CreateOptions{}
 
 func runCreate(ctx context.Context, c *model.CreateOptions) {
 	srv := server.NewServer(create)
-	defer func() {
-		if err := recover(); err != nil {
-			fmt.Println("dgsfgfbfsbdb")
-			srv.Stop()
-			return
-		}
-	}()
 	srv.Init()
 	go srv.Start()
 	quit := make(chan os.Signal, 1)
@@ -50,7 +43,7 @@ func init() {
 	startCmd.Flags().StringVarP(&create.NetworkMode, "network", "n", "udp", "运行的网络模式 [tcp udp]")
 	startCmd.Flags().StringVarP(&create.ListenPort, "port", "p", "9527", "监听的端口")
 	startCmd.Flags().StringVarP(&create.RemoteServerIP, "remoteIP", "r", "45.195.69.18", "远程服务器真实ip")
-	startCmd.Flags().StringVarP(&create.ClientAddress, "clientIP", "c", "10.10.10.10", "客户端ip")
-	startCmd.Flags().StringVarP(&create.ServerAddress, "serverIP", "s", "10.10.10.1", "服务端ip")
+	startCmd.Flags().StringVarP(&create.ClientAddress, "clientIP", "c", "172.16.0.10", "客户端ip")
+	startCmd.Flags().StringVarP(&create.ServerAddress, "serverIP", "s", "172.16.0.1", "服务端ip")
 	startCmd.Flags().StringVarP(&create.DNS, "dns", "", "8.8.8.8", "dns")
 }

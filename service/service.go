@@ -22,7 +22,7 @@ func (s *Service) CreateClientTUN(config *model.CreateOptions) (Tun *water.Inter
 	if err != nil {
 		return nil, err
 	}
-	s.DeviceList[Tun.Name()] = config
+	//s.DeviceList[Tun.Name()] = config
 	return Tun, nil
 }
 

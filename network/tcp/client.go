@@ -36,6 +36,7 @@ func (cnw *ClientNetWork) ClientDial() {
 	if err != nil {
 		panic(err)
 	}
+	log.Warn(fmt.Sprintf("Establish a connection from: %s", conn.RemoteAddr()))
 	defer conn.Close()
 	cnw.TcpConn = conn
 	go cnw.readTCPNetworkToTUN()
@@ -51,10 +52,7 @@ func (cnw *ClientNetWork) readTCPNetworkToTUN() {
 			return
 		}
 		b := buf[:n]
-		_, err = cnw.Net.Write(b)
-		if err != nil {
-			log.Error(err.Error())
-		}
+		cnw.Net.Write(b)
 		cnw.receivingBytes(n)
 	}
 }
@@ -68,10 +66,7 @@ func (cnw *ClientNetWork) readTunToTCPNetwork() {
 			continue
 		}
 		b := buf[:n]
-		_, err = cnw.TcpConn.Write(b)
-		if err != nil {
-			log.Error(err.Error())
-		}
+		cnw.TcpConn.Write(b)
 		cnw.setSentBytes(n)
 	}
 }

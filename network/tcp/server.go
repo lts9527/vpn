@@ -72,7 +72,7 @@ func (snw *ServerNetWork) readTunToTCPNetwork() {
 		}
 		b := buf[:n]
 		if key := netutil.GetDstKey(b); key != "" {
-			snw.Net.Write(b)
+			snw.TcpConn.Write(b)
 			snw.setSentBytes(n)
 		}
 	}

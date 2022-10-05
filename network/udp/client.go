@@ -14,16 +14,15 @@ type ClientNetWork struct {
 	Cos        *model.CreateOptions
 	connCache  *cache.Cache
 	UdpConn    *net.UDPConn
-	Net        *water.Interface
+	tun        *water.Interface
 	serverAddr *net.UDPAddr
 }
 
-func NewClientNetWork(config *model.CreateOptions, Net *water.Interface) *ClientNetWork {
-	snw := &ClientNetWork{
+func NewClientNetWork(config *model.CreateOptions, Tun *water.Interface) *ClientNetWork {
+	return &ClientNetWork{
 		Cos: config,
-		Net: Net,
+		tun: Tun,
 	}
-	return snw
 }
 
 func (cnw *ClientNetWork) ClientDial() {
@@ -55,7 +54,7 @@ func (cnw *ClientNetWork) readUDPNetworkToTUN() {
 			continue
 		}
 		b := buf[:n]
-		cnw.Net.Write(b)
+		cnw.tun.Write(b)
 		cnw.setSentBytes(n)
 	}
 }
@@ -63,15 +62,23 @@ func (cnw *ClientNetWork) readUDPNetworkToTUN() {
 func (cnw *ClientNetWork) readTunToUDPNetwork() {
 	buf := make([]byte, 2000)
 	for {
-		n, err := cnw.Net.Read(buf)
+		n, err := cnw.tun.Read(buf)
 		if err != nil || n == 0 {
 			fmt.Println("err ", err)
 			continue
 		}
 		b := buf[:n]
 		cnw.UdpConn.WriteToUDP(b, cnw.serverAddr)
-		cnw.receivingBytes(n)
+		cnw.setReceivingBytes(n)
 	}
+}
+
+func (cnw *ClientNetWork) GetSend() uint64 {
+	return ClientSentBytes
+}
+
+func (cnw *ClientNetWork) GetReceiving() uint64 {
+	return ClientReceivingBytes
 }
 
 var (
@@ -83,6 +90,6 @@ func (cnw *ClientNetWork) setSentBytes(n int) {
 	atomic.AddUint64(&ClientSentBytes, uint64(n))
 }
 
-func (cnw *ClientNetWork) receivingBytes(n int) {
+func (cnw *ClientNetWork) setReceivingBytes(n int) {
 	atomic.AddUint64(&ClientReceivingBytes, uint64(n))
 }

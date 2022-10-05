@@ -1,8 +1,11 @@
 package server
 
 import (
+	"fmt"
 	"github.com/net-byte/water"
+	"os"
 	"runtime"
+	"vpn/log"
 	"vpn/model"
 	"vpn/network/tcp"
 	"vpn/network/udp"
@@ -14,7 +17,7 @@ type Server struct {
 	svc    *service.Service
 	Tun    *water.Interface
 	config *model.CreateOptions
-	Net    interface{}
+	Net    model.Net
 }
 
 func NewServer(config *model.CreateOptions) *Server {
@@ -48,7 +51,8 @@ func (s *Server) Start() {
 			net.ListenUDP()
 		} else {
 			net := s.NewUDPClientNetWork()
-			net.ClientDial()
+			go net.ClientDial()
+			s.Net = net
 		}
 	case "tcp":
 		if s.config.ServerMode {
@@ -56,16 +60,23 @@ func (s *Server) Start() {
 			net.ListenTCP()
 		} else {
 			net := s.NewTCPClientNetWork()
-			net.ClientDial()
+			go net.ClientDial()
 			s.Net = net
 		}
 	default:
-		panic("Select the correct mode")
+		log.Warn("Select the correct mode")
+		s.Stop()
+		os.Exit(1)
 	}
 }
 
 func (s *Server) Stop() {
 	s.ResetTUN(s.config)
+}
+
+func (s *Server) Get() {
+	fmt.Println("接受字节:", utils.FormatFileSize(int64(s.Net.GetSend())))
+	fmt.Println("发送字节:", utils.FormatFileSize(int64(s.Net.GetReceiving())))
 }
 
 func (s *Server) NewTCPServerNetWork() *tcp.ServerNetWork {

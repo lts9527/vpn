@@ -18,3 +18,8 @@ type CreateOptions struct {
 	ServerAddress  string `json:"server_address,omitempty"`
 	LocalGateway   string `json:"local_gateway,omitempty"`
 }
+
+type Net interface {
+	GetSend() uint64
+	GetReceiving() uint64
+}

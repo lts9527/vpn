@@ -7,7 +7,6 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
-	"vpn/log"
 	"vpn/model"
 	"vpn/server"
 )
@@ -18,17 +17,11 @@ func runCreate(ctx context.Context, c *model.CreateOptions) {
 	srv := server.NewServer(create)
 	srv.Init()
 	go srv.Start()
-	defer func() {
-		if err := recover(); err != nil {
-			fmt.Println("panic")
-			fmt.Println(err)
-		}
-	}()
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
 	<-quit
-	log.Warn("stop")
 	srv.Stop()
+	srv.Get()
 }
 
 var startCmd = &cobra.Command{
